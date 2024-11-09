@@ -4,7 +4,8 @@ function App() {
 
   return (
     <>
-        <div className='text-6xl'>
+        <div className='text-6xl flex'>
+          <img src='github-mark.png' className='h-20 w-20'/>
             GitInsight
         </div> 
     </>
