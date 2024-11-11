@@ -5,6 +5,12 @@ import ContributerCard from "./ContributerCard";
 const Contributers = () => {
     const [ contributers, setContributers] = useState([]);
     const [ repo, setRepo] = useState("");
+    const [ loading , setLoading ] = useState(true);
+
+    useEffect(() => {
+        const url = localStorage.getItem("url");
+        fetchData(url);
+    }, []);
 
     const fetchData = async (url) => {
         try {
@@ -15,19 +21,16 @@ const Contributers = () => {
             const data = response.data;
             setContributers(data.contributers);
             setRepo(data.repo);
+            setLoading(false);
         } catch (error) {
             console.error(
                 "Error fetching data:",
                 error.response?.data || error.message
             );
+            setLoading(false);
         }
     };
     contributers.reverse();
-    useEffect(() => {
-        const url = localStorage.getItem("url");
-        fetchData(url);
-    }, []);
-
     return (
         <div className="bg-black">
             <div className="text-center font-bold text-white text-4xl pt-14">
@@ -36,12 +39,20 @@ const Contributers = () => {
                 to the Project
             </div>
             <div className="font-semibold text-3xl text-center md:text-left md:ml-32 text-white py-6">
-                Project : <a className="text-[#2A903B]"> {repo} </a>
+                Project : <a className="text-[#2A903B]"> {loading ? "Loading..." : repo} </a>
             </div>
             <div className="flex flex-col items-center gap-10 mx-3 md:mx-auto min-h-[900px]">
-                {contributers.map((contributer) => {
-                    return <ContributerCard key={contributer.name} contributer={contributer} />;
-                })}
+                {loading ? (
+                    [...Array(3)].map((_, index) => (
+                        <div key={index} className="animate-pulse w-full max-w-2xl">
+                            <div className="h-48 bg-gray-700 rounded-lg"></div>
+                        </div>
+                    ))
+                ) : (
+                    contributers.map((contributer) => (
+                        <ContributerCard key={contributer.name} contributer={contributer} />
+                    ))
+                )}
             </div>
         </div>
     );
